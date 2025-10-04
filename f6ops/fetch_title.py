@@ -19,5 +19,5 @@ def fetch_title(url: str) -> str:
             return ""
 
     except Exception as e:
-        print("Ошибка при загрузке страницы:", e)
+        print("Ошибка при загрузке:", e)
         return ""
