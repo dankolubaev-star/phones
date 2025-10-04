@@ -63,7 +63,6 @@ def _get_phone_id(cur, e164: str) -> int:
     return cur.lastrowid
 
 def add_pages(e164: str, urls: list[str]):
-    """Добавляет набор ссылок для номера (без дублей)."""
     if not urls:
         return
     con = open_db()
