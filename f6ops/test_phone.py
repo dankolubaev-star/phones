@@ -8,7 +8,7 @@ print("Исходный номер:", pe.raw)
 print("Нормализованный:", pe.e164)
 print("Оператор:", pe.operator)
 
-print("\nПоиск в DuckDuckGo...")
+print("Поиск в DuckDuckGo")
 urls = search_pages_by_phone(pe.e164, max_results=3)
 if urls:
     print("Найдены страницы:")
