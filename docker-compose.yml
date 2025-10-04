@@ -1,0 +1,10 @@
+services:
+  f6ops:
+    build: .
+    # монтируем текущую папку внутрь, чтобы правки в коде сразу были видны
+    volumes:
+      - ./:/app
+    # чтобы база была рядом с проектом на твоем диске
+    working_dir: /app
+    # эта команда выполнится при `up`
+    command: python -m f6ops.process_phones

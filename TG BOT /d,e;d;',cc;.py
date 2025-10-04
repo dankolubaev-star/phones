@@ -15,8 +15,7 @@ operators = {
     "911": "МегаФон",
     "981": "МегаФон",
     "970": "Tele2",
-    "977": "Tele2",
-    "919": "МТС"
+    "977": "Tele2"
 }
 
 def get_operator(prefix):
@@ -25,7 +24,7 @@ def get_operator(prefix):
 f = open("abonents.txt", "r", encoding="utf-8")
 for line in f:
     number = line.strip()
-    print("Номер: - abonents.py:28", number)
+    print("Номер:  abonents.py:27 - d,e;d;',cc;.py:27", number)
 
     digits = ""
     for character in number:

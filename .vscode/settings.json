@@ -1,0 +1,5 @@
+{
+    "editor.codeActionWidget.includeNearbyQuickFixes": true,
+    "editor.columnSelection": false,
+    "editor.inlayHints.enabled": "off"
+}
