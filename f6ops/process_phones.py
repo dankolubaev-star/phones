@@ -1,41 +1,36 @@
 from f6ops.phone_entry import PhoneEntry
 from f6ops.search_ddg import search_pages_by_phone
-from f6ops.db_sqlite import init, upsert_phone, add_pages, all_phones
+from f6ops.db_sqlite import init, upsert_phone, add_pages
 
-INPUT_FILE = "phones.txt"
+init()
 
-def process_file(path: str):
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            raw = line.strip()
-            if not raw:
-                continue
+try:
+    with open("phones.txt", "r", encoding="utf-8") as f:
+        lines = f.readlines()
+except Exception as e:
+    print("Ошибка при открытии phones.txt:", e)
+    lines = []
 
-            pe = PhoneEntry(raw)
+for raw in lines:
+    raw = raw.strip()
+    if not raw:
+        continue  
 
-            upsert_phone(pe.e164, pe.operator)
+    pe = PhoneEntry(raw)
+    if not pe.e164:
+        print("Неверный номер:", raw)
+        continue
 
-            urls = search_pages_by_phone(pe.e164, max_results=5)
+    upsert_phone(pe.e164, pe.operator)
 
-            uniq = []
-            for u in urls:
-                if u not in uniq:
-                    uniq.append(u)
+    urls = search_pages_by_phone(pe.e164, max_results=5)
 
-            if uniq:
-                add_pages(pe.e164, uniq)
+    if len(urls) > 0:
+        add_pages(pe.e164, urls)
 
-            print(pe.raw, "->", pe.e164, "->", pe.operator, "(страниц:", len(uniq), ")")
-            for u in uniq:
-                print("Исходный номер:", pe.raw)
-                print("В формате E.164:", pe.e164)
-                print("Оператор:", pe.operator)
-                print("Количество страниц:", len(uniq))
+    print("Номер:", pe.e164, "| Оператор:", pe.operator, "| Найдено:", len(urls))
 
-    for u in uniq:
-        print("Страница:", u)
-
-if __name__ == "__main__":
-    init()
-    process_file(INPUT_FILE)
-    print("Всего в БД:", len(all_phones()))
+    for link in urls:
+        print("-", link)
+    else:
+        print("Номер:", pe.e164, "| Оператор:", pe.operator, "| Не найдено:")
