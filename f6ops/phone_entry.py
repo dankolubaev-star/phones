@@ -1,6 +1,6 @@
 import re
-
 from f6ops.operators import get_operator_by_def  
+
 class PhoneEntry:
     def __init__(self, raw_number: str):
         self.raw = raw_number.strip()

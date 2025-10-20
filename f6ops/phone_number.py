@@ -1,12 +1,18 @@
-def normalize_number(raw: str) -> str:
-    digits = ""
+def normalize_number(raw):
+
+    clean = ""  
+
     for ch in raw:
         if ch.isdigit() or ch == "+":
-            digits += ch
+            clean += ch
+        elif ch == "*":
+            clean += "0"
+        else:
+            continue
 
-    if digits.startswith("8"):
-        digits = "+7" + digits[1:]
-    elif not digits.startswith("+"):
-        digits = "+7" + digits
+    if clean.startswith("8"):
+        clean = "+7" + clean[1:]
+    elif not clean.startswith("+"):
+        clean = "+7" + clean
 
-    return digits
+    return clean
