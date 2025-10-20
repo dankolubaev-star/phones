@@ -14,7 +14,7 @@ try:
     with open("phones.txt", "r", encoding="utf-8") as f:
         lines = f.readlines()
 except Exception as e:
-    print("Не удалось открыть phones.txt:", e)
+    print("Не смог открыть phones.txt:", e)
     lines = []
 
 for raw in lines:
