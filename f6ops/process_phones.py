@@ -34,8 +34,8 @@ for raw in lines:
         add_pages(e164, urls)
         print(f"Номер: {e164} | Оператор: {operator} | Ссылок: {len(urls)}")
         for u in urls:
-            print(" -", u)
+            print(" - ", u)
     else:
         print(f"Номер: {e164} | Оператор: {operator} | Ссылок: 0")
 
-print("Готово.")
+print("Готово")
