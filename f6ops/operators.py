@@ -70,7 +70,8 @@ OPERATORS = {
     "978": "МТС",
     "979": "МТС",
     "985": "МТС",
-    "991": "МТС" 
+    "991": "МТС",
+    "800": "МТС"
 }  
 
 def get_operator_by_def(def_code: str | None) -> str:
