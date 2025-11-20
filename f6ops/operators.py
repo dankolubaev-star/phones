@@ -74,7 +74,7 @@ OPERATORS = {
     "800": "МТС"
 }  
 
-def get_operator_by_def(def_code: str | None) -> str:
+def get_operator_by_def(def_code):
     if not def_code:
         return "Неизвестно"
     return OPERATORS.get(def_code[:3], "Неизвестно")

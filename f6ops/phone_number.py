@@ -1,14 +1,11 @@
 def normalize_number(raw):
-
-    clean = ""  
+    clean = ""
 
     for ch in raw:
         if ch.isdigit() or ch == "+":
             clean += ch
         elif ch == "*":
             clean += "0"
-        else:
-            continue
 
     if clean.startswith("8"):
         clean = "+7" + clean[1:]

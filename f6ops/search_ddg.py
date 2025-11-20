@@ -1,84 +1,61 @@
+import time
 import requests
 from bs4 import BeautifulSoup
-import urllib.parse
+from urllib.parse import unquote
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                  "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 }
 
-DDG_HTML = "https://duckduckgo.com/html/"
+TIMEOUT = 10
 
-def _clean_phone(phone: str) -> str:
-    """Очищает вход — оставляет только цифры и +, меняет 8 -> +7."""
-    clean = "".join(ch for ch in phone if ch.isdigit() or ch == "+")
-    if clean.startswith("8"):
-        clean = "+7" + clean[1:]
-    elif not clean.startswith("+"):
-        clean = "+7" + clean
-    return clean
 
-def _extract_real_url(href: str) -> str:
+def extract_real_url(href: str) -> str:
     if not href:
         return ""
+
     if "uddg=" in href:
         try:
-            real = href.split("uddg=")[-1]
-            return urllib.parse.unquote(real)
-        except Exception:
-            return href 
+            return unquote(href.split("uddg=")[-1])
+        except:
+            return href
+
     return href
-def search_ddg_with_dorks(phone: str, max_results: int = 10) -> list:
-    clean_phone = _clean_phone(phone)
-    dorks = [
-         f'"{clean_phone}"',                      
-        f'"{clean_phone}" site:vk.com',
-        f'"{clean_phone}" site:avito.ru',
-        f'"{clean_phone}" site:ok.ru',
-        f'"{clean_phone}" site:instagram.com',
-        f'"{clean_phone}" intitle:контакт OR intitle:контакты',
-        f'"{clean_phone}" inurl:contact OR inurl:contacts OR inurl:kontakty',
-        f'"{clean_phone}" site:2gis.ru',
-        f'"{clean_phone}" site:yellowpages.ru',
-    ]
-    results = []
-    seen = set()
-    for q in dorks:
-        params = {"q": q, "kl": "ru-ru"}
-        try:
-            resp = requests.get(DDG_HTML, params=params, headers=HEADERS, timeout=10)
-        except Exception as e:
-            print("Ошибка", e)
-            continue
 
-        if resp.status_code != 200:
-            continue
 
-        soup = BeautifulSoup(resp.text, "html.parser")
+def search_ddg(phone: str, max_results: int = 5):
+    query = f'"{phone}"'
+    base_url = "https://duckduckgo.com/html/"
+    params = {"q": query}
 
-        for a in soup.find_all("a"):
-            href = a.get("href")
-            if not href:
-                continue
+    print(f"\n DDG запрос: {query}")
 
-            href = _extract_real_url(href)
+    resp = requests.get(base_url, params=params, headers=HEADERS, timeout=TIMEOUT)
+    print("Код ответа (1):", resp.status_code)
 
-            if not href.startswith("http"):
-                continue
+    if resp.status_code == 202:
+        print("DDG вернул 202, ждем")
+        time.sleep(1)
+        resp = requests.get(base_url, params=params, headers=HEADERS, timeout=TIMEOUT)
+        print("Код ответа (2):", resp.status_code)
 
-            if "duckduckgo.com" in href and "uddg=" not in href:
-                continue
+    if resp.status_code != 200:
+        print("Ошибка: DDG не вернул 200. Пропускаем номер.")
+        return []
 
-            if href in seen:
-                continue
+    soup = BeautifulSoup(resp.text, "html.parser")
+    links = []
 
-            seen.add(href)
-            results.append(href)
+    for a in soup.find_all("a"):
+        href = a.get("href", "")
+        real = extract_real_url(href)
 
-            if len(results) >= max_results:
-                break
+        if real.startswith("http") and "duckduckgo.com" not in real:
+            if real not in links: 
+                links.append(real)
 
-        if len(results) >= max_results:
+        if len(links) >= max_results:
             break
 
-    return results
+    print("найдено ссылок:", len(links))
+    return links
